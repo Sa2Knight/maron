@@ -1,2 +1,3 @@
 # maron
-My practice for creating interpreter by golang
+
+[Go言語でつくるインタプリタ](https://www.oreilly.co.jp/books/9784873118222/) の写経をしながら、自分なりのインタプリタを作成するようのリポジトリ
