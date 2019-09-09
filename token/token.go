@@ -84,6 +84,12 @@ const (
 
 	// RETURN 値の返却
 	RETURN = "RETURN"
+
+	// EQ 一致
+	EQ = "=="
+
+	// NOT_EQ 不一致
+	NOT_EQ = "!="
 )
 
 var keywords = map[string]TokenType{
