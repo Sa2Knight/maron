@@ -69,11 +69,31 @@ const (
 
 	// LET 変数定義
 	LET = "LET"
+
+	// TRUE 真
+	TRUE = "TRUE"
+
+	// FALSE 偽
+	FALSE = "FALSE"
+
+	// IF もし〜ならば
+	IF = "IF"
+
+	// ELSE そうでなければ
+	ELSE = "ELSE"
+
+	// RETURN 値の返却
+	RETURN = "RETURN"
 )
 
 var keywords = map[string]TokenType{
-	"fn":  FUNCTION,
-	"let": LET,
+	"fn":     FUNCTION,
+	"let":    LET,
+	"true":   TRUE,
+	"false":  FALSE,
+	"if":     IF,
+	"else":   ELSE,
+	"return": RETURN,
 }
 
 // LookupIdent 文字列のトークンタイプを戻す(キーワードか識別子か)
