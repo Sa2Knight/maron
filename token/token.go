@@ -28,6 +28,24 @@ const (
 	// PLUS 加算演算子
 	PLUS = "+"
 
+	// MINUS マイナス演算子
+	MINUS = "-"
+
+	// BANG 否定演算子
+	BANG = "!"
+
+	// ASTERISK 積算演算子
+	ASTERISK = "*"
+
+	// SLASH 除算演算子
+	SLASH = "/"
+
+	// LT 小なり
+	LT = "<"
+
+	// GT 大なり
+	GT = ">"
+
 	// COMMA 区切り文字
 	COMMA = ","
 
