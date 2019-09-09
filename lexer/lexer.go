@@ -1,7 +1,7 @@
 package lexer
 
 import (
-	"github.com/Sa2Knight/monky/token"
+	"github.com/Sa2Knight/maron/token"
 )
 
 // Lexer 字句解析器
