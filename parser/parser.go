@@ -1,6 +1,8 @@
 package parser
 
 import (
+	"fmt"
+
 	"github.com/Sa2Knight/maron/ast"
 	"github.com/Sa2Knight/maron/lexer"
 	"github.com/Sa2Knight/maron/token"
@@ -11,11 +13,12 @@ type Parser struct {
 	l         *lexer.Lexer
 	curToken  token.Token
 	peekToken token.Token
+	errors    []string
 }
 
 // New 字句解析期を渡して、構文解析器を生成
 func New(l *lexer.Lexer) *Parser {
-	p := &Parser{l: l}
+	p := &Parser{l: l, errors: []string{}}
 	p.nextToken() // curTokenとpeekToken両方をセットするために二度読む
 	p.nextToken()
 
@@ -35,6 +38,11 @@ func (p *Parser) ParseProgram() *ast.Program {
 		p.nextToken()
 	}
 	return program
+}
+
+// Errors パースエラーの一覧を戻す
+func (p *Parser) Errors() []string {
+	return p.errors
 }
 
 func (p *Parser) parseStatement() ast.Statement {
@@ -83,10 +91,16 @@ func (p *Parser) expectPeek(t token.TokenType) bool {
 		p.nextToken()
 		return true
 	}
+	p.peekError(t)
 	return false
 }
 
 func (p *Parser) nextToken() {
 	p.curToken = p.peekToken
 	p.peekToken = p.l.NextToken()
+}
+
+func (p *Parser) peekError(t token.TokenType) {
+	msg := fmt.Sprintf("expected next token to be %s, got %s instead", t, p.peekToken.Type)
+	p.errors = append(p.errors, msg)
 }
