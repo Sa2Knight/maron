@@ -2,9 +2,14 @@ package ast
 
 import "github.com/Sa2Knight/maron/token"
 
+/***********************
+ * インタフェース
+ **********************/
+
 // Node is interface for all node structure
 type Node interface {
 	TokenLiteral() string // 要素が持つトークンリテラル値を返す(デバッグ用)
+	String() string       // 要素が持つ部分木を文字列で表現する(デバッグ用)
 }
 
 // Statement is interface for all statement structure
@@ -19,6 +24,10 @@ type Expression interface {
 	expressionNode()
 }
 
+/***********************
+* 構造体 Program
+***********************/
+
 // Program is root node
 type Program struct {
 	Statements []Statement
@@ -32,6 +41,10 @@ func (p *Program) TokenLiteral() string {
 	return ""
 }
 
+/***********************
+* 構造体 LetStatement
+***********************/
+
 // LetStatement is structure for let statement
 type LetStatement struct {
 	Token token.Token // token.LET
@@ -43,6 +56,12 @@ type LetStatement struct {
 func (ls *LetStatement) TokenLiteral() string {
 	return ls.Token.Literal
 }
+
+func (ls *LetStatement) statementNode() {}
+
+/***********************
+* 構造体 ReturnStatement
+***********************/
 
 // ReturnStatement is structure for return statement
 type ReturnStatement struct {
@@ -57,7 +76,25 @@ func (rs *ReturnStatement) TokenLiteral() string {
 
 func (rs *ReturnStatement) statementNode() {}
 
-func (ls *LetStatement) statementNode() {}
+/***********************
+* 構造体 ExpressionStatement
+***********************/
+
+// ExpressionStatement is structure for expression statement
+type ExpressionStatement struct {
+	Token      token.Token // 式の最初のトークンStruct
+	Expression Expression
+}
+
+// TokenLiteral is ExpressionStatement method
+// Statementインタフェースを満たす用
+func (es *ExpressionStatement) TokenLiteral() string {
+	return es.Token.Literal
+}
+
+/***********************
+* 構造体 Identifier
+***********************/
 
 // Identifier is structure for Identifier
 type Identifier struct {
