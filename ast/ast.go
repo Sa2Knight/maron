@@ -1,6 +1,10 @@
 package ast
 
-import "github.com/Sa2Knight/maron/token"
+import (
+	"bytes"
+
+	"github.com/Sa2Knight/maron/token"
+)
 
 /***********************
  * インタフェース
@@ -41,6 +45,16 @@ func (p *Program) TokenLiteral() string {
 	return ""
 }
 
+// String is Program's method
+func (p *Program) String() string {
+	var out bytes.Buffer
+
+	for _, s := range p.Statements {
+		out.WriteString(s.String())
+	}
+	return out.String()
+}
+
 /***********************
 * 構造体 LetStatement
 ***********************/
@@ -55,6 +69,24 @@ type LetStatement struct {
 // TokenLiteral is LetStatement's method
 func (ls *LetStatement) TokenLiteral() string {
 	return ls.Token.Literal
+}
+
+// String is LetStatement's method
+func (ls *LetStatement) String() string {
+	var out bytes.Buffer
+
+	out.WriteString(ls.TokenLiteral() + " ")
+	out.WriteString(ls.Name.String())
+	out.WriteString(" = ")
+
+	// TODO: 今はExpressionをパースできないので仮
+	if ls.Value != nil {
+		out.WriteString(ls.Value.String())
+	}
+
+	out.WriteString(";")
+
+	return out.String()
 }
 
 func (ls *LetStatement) statementNode() {}
@@ -72,6 +104,22 @@ type ReturnStatement struct {
 // TokenLiteral is ReturnStatement's method
 func (rs *ReturnStatement) TokenLiteral() string {
 	return rs.Token.Literal
+}
+
+// String is ReturnStatement's method
+func (rs *ReturnStatement) String() string {
+	var out bytes.Buffer
+
+	out.WriteString(rs.TokenLiteral() + " ")
+
+	// TODO: 今はExpressionをパースできないので仮
+	if rs.ReturnValue != nil {
+		out.WriteString(rs.ReturnValue.String())
+	}
+
+	out.WriteString(";")
+
+	return out.String()
 }
 
 func (rs *ReturnStatement) statementNode() {}
@@ -92,6 +140,15 @@ func (es *ExpressionStatement) TokenLiteral() string {
 	return es.Token.Literal
 }
 
+// String is ExpressionStatement's method
+func (es *ExpressionStatement) String() string {
+	// TODO: 今はExpressionをパースできないので仮
+	if es.Expression != nil {
+		return es.Expression.String()
+	}
+	return ""
+}
+
 /***********************
 * 構造体 Identifier
 ***********************/
@@ -107,4 +164,10 @@ func (i *Identifier) TokenLiteral() string {
 	return i.Token.Literal
 }
 
+func (i *Identifier) String() string {
+	return i.Value
+}
+
 func (i *Identifier) statementNode() {}
+
+func (i *Identifier) expressionNode() {}
