@@ -149,6 +149,8 @@ func (es *ExpressionStatement) String() string {
 	return ""
 }
 
+func (es *ExpressionStatement) statementNode() {}
+
 /***********************
 * 構造体 Identifier
 ***********************/
