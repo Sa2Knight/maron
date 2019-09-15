@@ -152,6 +152,35 @@ func (es *ExpressionStatement) String() string {
 func (es *ExpressionStatement) statementNode() {}
 
 /***********************
+* 構造体 PrefixExpression
+***********************/
+
+// PrefixExpression is structure for prefix expression that like '-3' or '!n'
+type PrefixExpression struct {
+	Token    token.Token // 前置トークン ! or -
+	Operator string      // 前置トークン文字列
+	Right    Expression  // 右辺
+}
+
+// TokenLiteral is PrefixExpression's method
+func (pe *PrefixExpression) TokenLiteral() string { return pe.Token.Literal }
+
+// String is PrefixExpression's method
+func (pe *PrefixExpression) String() string {
+	var out bytes.Buffer
+	out.WriteString("(")
+	out.WriteString(pe.Operator)
+	out.WriteString(pe.Right.String())
+	out.WriteString(")")
+
+	return out.String()
+}
+
+func (pe *PrefixExpression) statementNode() {}
+
+func (pe *PrefixExpression) expressionNode() {}
+
+/***********************
 * 構造体 Identifier
 ***********************/
 
