@@ -173,3 +173,26 @@ func (i *Identifier) String() string {
 func (i *Identifier) statementNode() {}
 
 func (i *Identifier) expressionNode() {}
+
+/***********************
+* 構造体 IntegerLiteral
+***********************/
+
+// IntegerLiteral is structure for interger literal
+type IntegerLiteral struct {
+	Token token.Token // token.IDENT
+	Value int64       // 識別子名
+}
+
+// TokenLiteral is IntegerLiteral's method
+func (i *IntegerLiteral) TokenLiteral() string {
+	return i.Token.Literal
+}
+
+func (i *IntegerLiteral) String() string {
+	return i.Token.Literal
+}
+
+func (i *IntegerLiteral) statementNode() {}
+
+func (i *IntegerLiteral) expressionNode() {}
