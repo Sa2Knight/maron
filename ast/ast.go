@@ -181,6 +181,37 @@ func (pe *PrefixExpression) statementNode() {}
 func (pe *PrefixExpression) expressionNode() {}
 
 /***********************
+* 構造体 InfixExpression
+***********************/
+
+// InfixExpression is structure for infix expression that like '5 + 5'
+type InfixExpression struct {
+	Token    token.Token // 演算子トークン + - / * == など
+	Operator string      // 演算子トークンの文字列
+	Left     Expression  // 左辺
+	Right    Expression  // 右辺
+}
+
+// TokenLiteral is InfixExpression's method
+func (ie *InfixExpression) TokenLiteral() string { return ie.Token.Literal }
+
+// String is InfixExpression's method
+func (ie *InfixExpression) String() string {
+	var out bytes.Buffer
+	out.WriteString("(")
+	out.WriteString(ie.Left.String())
+	out.WriteString(" " + ie.Operator + " ")
+	out.WriteString(ie.Right.String())
+	out.WriteString(")")
+
+	return out.String()
+}
+
+func (ie *InfixExpression) statementNode() {}
+
+func (ie *InfixExpression) expressionNode() {}
+
+/***********************
 * 構造体 Identifier
 ***********************/
 
