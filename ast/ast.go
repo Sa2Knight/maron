@@ -256,3 +256,26 @@ func (i *IntegerLiteral) String() string {
 func (i *IntegerLiteral) statementNode() {}
 
 func (i *IntegerLiteral) expressionNode() {}
+
+/***********************
+* 構造体 Boolean
+***********************/
+
+// Boolean is structure for interger literal
+type Boolean struct {
+	Token token.Token // token.IDENT
+	Value bool        // 識別子名
+}
+
+// TokenLiteral is Boolean's method
+func (b *Boolean) TokenLiteral() string {
+	return b.Token.Literal
+}
+
+func (b *Boolean) String() string {
+	return b.Token.Literal
+}
+
+func (b *Boolean) statementNode() {}
+
+func (b *Boolean) expressionNode() {}

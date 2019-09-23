@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"strconv"
 	"testing"
 
 	"github.com/Sa2Knight/maron/ast"
@@ -57,6 +58,41 @@ func TestIntegerLiteralExpression(t *testing.T) {
 	}
 	if ident.TokenLiteral() != "5" {
 		t.Errorf("ident.TokenLiteral not %s. got=%s", "foobar", ident.TokenLiteral())
+	}
+}
+
+func TestBooleanExpression(t *testing.T) {
+	booleanTests := []struct {
+		input    string
+		expected bool
+	}{
+		{"true;", true},
+		{"false;", false},
+	}
+
+	for _, test := range booleanTests {
+		p := New(lexer.New(test.input))
+		program := p.ParseProgram()
+		checkParserErrors(t, p)
+
+		if len(program.Statements) != 1 {
+			t.Fatalf("program.Statements does not contain 1 statements. got=%d", len(program.Statements))
+		}
+		stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+		if !ok {
+			t.Fatalf("exp not *ast.Indentifier. got=%T", program.Statements[0])
+		}
+
+		ident, ok := stmt.Expression.(*ast.Boolean)
+		if !ok {
+			t.Fatalf("exp not *ast.Boolean. got=%T", stmt.Expression)
+		}
+		if ident.Value != test.expected {
+			t.Errorf("ident.Value not %v. got=%v", test.expected, ident.Value)
+		}
+		if ident.TokenLiteral() != strconv.FormatBool(test.expected) {
+			t.Errorf("ident.TokenLiteral not %s. got=%s", strconv.FormatBool(test.expected), ident.TokenLiteral())
+		}
 	}
 }
 
