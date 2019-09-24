@@ -320,6 +320,75 @@ func TestOperatorPrecedenceParsing(t *testing.T) {
 	}
 }
 
+func TestIfExpression(t *testing.T) {
+	input := `if (x < y) { x }`
+	program := getParsedProgram(t, input, 1)
+
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatalf("式としてパースされてないぞ")
+	}
+	exp, ok := stmt.Expression.(*ast.IfExpression)
+	if !ok {
+		t.Fatalf("if式としてパースされてないぞ")
+	}
+	if !testInfixExpression(t, exp.Condition, "x", "<", "y") {
+		t.Fatalf("ifの条件式ちゃんとパースできてないぞ")
+		return
+	}
+	if len(exp.Consequence.Statements) != 1 {
+		t.Errorf("真のブロックが1文じゃなくて%d文になってるよ", len(exp.Consequence.Statements))
+	}
+	consequence, ok := exp.Consequence.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatalf("真のブロック内が式じゃないぞ")
+	}
+	if !testIdentifier(t, consequence.Expression, "x") {
+		return
+	}
+	if exp.Alternative != nil {
+		t.Errorf("else文がないはずなのにあるってパースされてるぞ")
+	}
+}
+
+func TestIfElseExpression(t *testing.T) {
+	input := `if (x < y) { x } else { y }`
+	program := getParsedProgram(t, input, 1)
+
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatalf("式としてパースされてないぞ")
+	}
+	exp, ok := stmt.Expression.(*ast.IfExpression)
+	if !ok {
+		t.Fatalf("if式としてパースされてないぞ")
+	}
+	if !testInfixExpression(t, exp.Condition, "x", "<", "y") {
+		t.Fatalf("ifの条件式ちゃんとパースできてないぞ")
+		return
+	}
+	if len(exp.Consequence.Statements) != 1 {
+		t.Errorf("真のブロックが1文じゃなくて%d文になってるよ", len(exp.Consequence.Statements))
+	}
+	consequence, ok := exp.Consequence.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatalf("真のブロック内が式じゃないぞ")
+	}
+	if !testIdentifier(t, consequence.Expression, "x") {
+		return
+	}
+	if len(exp.Alternative.Statements) != 1 {
+		t.Errorf("真のブロックが1文じゃなくて%d文になってるよ", len(exp.Alternative.Statements))
+	}
+	alternative, ok := exp.Alternative.Statements[0].(*ast.ExpressionStatement)
+	if !ok {
+		t.Fatalf("真のブロック内が式じゃないぞ")
+	}
+	if !testIdentifier(t, alternative.Expression, "y") {
+		return
+	}
+}
+
 func getParsedProgram(t *testing.T, input string, statementSize int) *ast.Program {
 	p := New(lexer.New(input))
 

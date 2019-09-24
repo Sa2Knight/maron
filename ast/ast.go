@@ -212,6 +212,41 @@ func (ie *InfixExpression) statementNode() {}
 func (ie *InfixExpression) expressionNode() {}
 
 /***********************
+* 構造体 IfExpression
+***********************/
+
+// IfExpression is structure for if statement
+type IfExpression struct {
+	Token       token.Token     // 'if' トークン
+	Condition   Expression      // 条件式
+	Consequence *BlockStatement // 真で実行されるブロック
+	Alternative *BlockStatement // 偽で実行されるブロック
+}
+
+// TokenLiteral is IfExpression's method
+func (ie *IfExpression) TokenLiteral() string { return ie.Token.Literal }
+
+// String is IfExpression's method
+func (ie *IfExpression) String() string {
+	var out bytes.Buffer
+	out.WriteString("if")
+	out.WriteString(ie.Condition.String())
+	out.WriteString(" ")
+	out.WriteString(ie.Consequence.String())
+
+	if ie.Alternative != nil {
+		out.WriteString("else ")
+		out.WriteString(ie.Alternative.String())
+	}
+
+	return out.String()
+}
+
+func (ie *IfExpression) statementNode() {}
+
+func (ie *IfExpression) expressionNode() {}
+
+/***********************
 * 構造体 Identifier
 ***********************/
 
@@ -279,3 +314,31 @@ func (b *Boolean) String() string {
 func (b *Boolean) statementNode() {}
 
 func (b *Boolean) expressionNode() {}
+
+/***********************
+* 構造体 BlockStatement
+***********************/
+
+// BlockStatement is structure for block statement
+type BlockStatement struct {
+	Token      token.Token // { トークン
+	Statements []Statement // ブロックは複数の文を含む
+}
+
+// TokenLiteral is BlockStatement's method
+func (b *BlockStatement) TokenLiteral() string {
+	return b.Token.Literal
+}
+
+func (b *BlockStatement) String() string {
+	var out bytes.Buffer
+
+	for _, s := range b.Statements {
+		out.WriteString(s.String())
+	}
+	return out.String()
+}
+
+func (b *BlockStatement) statementNode() {}
+
+func (b *BlockStatement) expressionNode() {}
