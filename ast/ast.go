@@ -2,6 +2,7 @@ package ast
 
 import (
 	"bytes"
+	"strings"
 
 	"github.com/Sa2Knight/maron/token"
 )
@@ -291,6 +292,43 @@ func (i *IntegerLiteral) String() string {
 func (i *IntegerLiteral) statementNode() {}
 
 func (i *IntegerLiteral) expressionNode() {}
+
+/***********************
+* 構造体 FunctionLiteral
+***********************/
+
+// FunctionLiteral is structure for Function literal
+type FunctionLiteral struct {
+	Token      token.Token     // 'fn' トークン
+	Parameters []*Identifier   // パラメータリスト
+	Body       *BlockStatement // 関数本体
+}
+
+// TokenLiteral is FunctionLiteral's method
+func (fl *FunctionLiteral) TokenLiteral() string {
+	return fl.Token.Literal
+}
+
+func (fl *FunctionLiteral) String() string {
+	var out bytes.Buffer
+
+	params := []string{}
+	for _, p := range fl.Parameters {
+		params = append(params, p.String())
+	}
+
+	out.WriteString(fl.TokenLiteral())
+	out.WriteString("(")
+	out.WriteString(strings.Join(params, ", "))
+	out.WriteString(") ")
+	out.WriteString(fl.Body.String())
+
+	return out.String()
+}
+
+func (fl *FunctionLiteral) statementNode() {}
+
+func (fl *FunctionLiteral) expressionNode() {}
 
 /***********************
 * 構造体 Boolean
