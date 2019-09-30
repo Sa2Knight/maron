@@ -79,33 +79,29 @@ func TestBooleanExpression(t *testing.T) {
 }
 
 func TestLetStatements(t *testing.T) {
-	input := `
-let x = 5;
-let y = 10;
-let foobar = 848484;
-`
-	program := getParsedProgram(t, input, 3)
-	if program == nil {
-		t.Fatalf("ParseProgram() returned nil")
-	}
-
 	tests := []struct {
+		input               string
 		expectedIndentifier string
+		expectedValue       interface{}
 	}{
-		{"x"},
-		{"y"},
-		{"foobar"},
+		{"let x = 5;", "x", 5},
+		{"let y = true;", "y", true},
+		{"let foobar = y;", "foobar", "y"},
 	}
 
-	for i, tt := range tests {
-		stmt := program.Statements[i]
-		if !testLetStatement(t, stmt, tt.expectedIndentifier) {
+	for _, tt := range tests {
+		program := getParsedProgram(t, tt.input, 1)
+		if program == nil {
+			t.Fatalf("ParseProgram() returned nil")
+		}
+		stmt := program.Statements[0]
+		if !testLetStatement(t, stmt, tt.expectedIndentifier, tt.expectedValue) {
 			return
 		}
 	}
 }
 
-func testLetStatement(t *testing.T, s ast.Statement, name string) bool {
+func testLetStatement(t *testing.T, s ast.Statement, name string, value interface{}) bool {
 	if s.TokenLiteral() != "let" {
 		t.Errorf("s.TokenLiteral not 'let'. go=%q", s.TokenLiteral())
 		return false
@@ -126,28 +122,35 @@ func testLetStatement(t *testing.T, s ast.Statement, name string) bool {
 		t.Errorf("letStmt.Name.Value not '%s'. got=%s", name, letStmt.Name.Value)
 		return false
 	}
+
+	if !testLiteralExpression(t, letStmt.Value, value) {
+		return false
+	}
 	return true
 }
 
 func TestReturnsStatements(t *testing.T) {
-	input := `
-return 5;
-return 10;
-return 993322;
-`
-	program := getParsedProgram(t, input, 3)
-	if program == nil {
-		t.Fatalf("ParseProgram() returned nil")
+	tests := []struct {
+		input         string
+		expectedValue int64
+	}{
+		{"return 5", 5},
+		{"return 10", 10},
+		{"return 12345", 12345},
 	}
 
-	for _, stmt := range program.Statements {
-		returnStmt, ok := stmt.(*ast.ReturnStatement)
+	for _, tt := range tests {
+		program := getParsedProgram(t, tt.input, 1)
+		returnStmt, ok := program.Statements[0].(*ast.ReturnStatement)
 		if !ok {
-			t.Errorf("stmt not *ast.returnStatement. got=%T", stmt)
+			t.Errorf("stmt not *ast.returnStatement. got=%T", returnStmt)
 			continue
 		}
 		if returnStmt.TokenLiteral() != "return" {
 			t.Errorf("returnStmt.TokenLiteral not 'return', got %q", returnStmt.TokenLiteral())
+		}
+		if !testIntegerLiteral(t, returnStmt.ReturnValue, tt.expectedValue) {
+			return
 		}
 	}
 }
