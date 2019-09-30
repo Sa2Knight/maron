@@ -42,6 +42,7 @@ var precedences = map[token.TokenType]int{
 	token.MINUS:    SUM,
 	token.SLASH:    PRODUCT,
 	token.ASTERISK: PRODUCT,
+	token.LPAREN:   CALL,
 }
 
 // Parser 構文解析器本体の構造体
@@ -82,6 +83,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.NOT_EQ, p.parseInfixExpression)
 	p.registerInfix(token.LT, p.parseInfixExpression)
 	p.registerInfix(token.GT, p.parseInfixExpression)
+	p.registerInfix(token.LPAREN, p.parseCallExpression)
 
 	return p
 }
@@ -354,6 +356,41 @@ func (p *Parser) parseInfixExpression(left ast.Expression) ast.Expression {
 	expression.Right = p.parseExpression(precedence)
 
 	return expression
+}
+
+func (p *Parser) parseCallExpression(function ast.Expression) ast.Expression {
+	exp := &ast.CallExpression{Token: p.curToken, Function: function}
+	exp.Arguments = p.parseCallArguments()
+	return exp
+}
+
+func (p *Parser) parseCallArguments() []ast.Expression {
+	args := []ast.Expression{}
+
+	// 引数なしの場合終了
+	if p.peekTokenIs(token.RPAREN) {
+		p.nextToken()
+		return args
+	}
+
+	// 引数1個め
+	p.nextToken()
+	args = append(args, p.parseExpression(LOWEST))
+
+	// 次がカンマであれば、もう一つ引数があるので積んでいく
+	for p.peekTokenIs(token.COMMA) {
+		p.nextToken() // カンマを飛ばす
+		p.nextToken() // 次の引数を見る
+
+		args = append(args, p.parseExpression(LOWEST))
+	}
+
+	// カンマじゃなかったら ) が来るはず
+	if !p.expectPeek(token.RPAREN) {
+		return nil
+	}
+
+	return args
 }
 
 func (p *Parser) curTokenIs(t token.TokenType) bool {

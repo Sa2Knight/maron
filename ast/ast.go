@@ -331,6 +331,42 @@ func (fl *FunctionLiteral) statementNode() {}
 func (fl *FunctionLiteral) expressionNode() {}
 
 /***********************
+* 構造体 CallExpression
+***********************/
+
+// CallExpression is structure for Function literal
+type CallExpression struct {
+	Token     token.Token  // '(' トークン
+	Function  Expression   // 関数を表す式
+	Arguments []Expression // 引数リストは式のリスト
+}
+
+// TokenLiteral is CallExpression's method
+func (ce *CallExpression) TokenLiteral() string {
+	return ce.Token.Literal
+}
+
+func (ce *CallExpression) String() string {
+	var out bytes.Buffer
+
+	args := []string{}
+	for _, a := range ce.Arguments {
+		args = append(args, a.String())
+	}
+
+	out.WriteString(ce.Function.String())
+	out.WriteString("(")
+	out.WriteString(strings.Join(args, ", "))
+	out.WriteString(")")
+
+	return out.String()
+}
+
+func (ce *CallExpression) statementNode() {}
+
+func (ce *CallExpression) expressionNode() {}
+
+/***********************
 * 構造体 Boolean
 ***********************/
 
