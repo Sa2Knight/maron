@@ -5,6 +5,14 @@ import (
 	"github.com/Sa2Knight/maron/object"
 )
 
+var (
+	// TRUE ネイティブオブジェクト
+	TRUE = &object.Boolean{Value: true}
+
+	// FALSE ネイティブオブジェクト
+	FALSE = &object.Boolean{Value: false}
+)
+
 // Eval is evaluate ast.node
 func Eval(node ast.Node) object.Object {
 	switch node := node.(type) {
@@ -17,9 +25,12 @@ func Eval(node ast.Node) object.Object {
 	case *ast.ExpressionStatement:
 		return Eval(node.Expression)
 
-	// 数値リテラルの場合、そのまま数値として評価する
+	// 数値リテラル、真偽値リテラルの場合、そのまま数値として評価する
 	case *ast.IntegerLiteral:
 		return &object.Integer{Value: node.Value}
+
+	case *ast.Boolean:
+		return &object.Boolean{Value: node.Value}
 	}
 
 	return nil
@@ -32,4 +43,11 @@ func evalStatements(stmts []ast.Statement) object.Object {
 	}
 
 	return result
+}
+
+func nativeBoolToBooleanObject(input bool) *object.Boolean {
+	if input {
+		return TRUE
+	}
+	return FALSE
 }
