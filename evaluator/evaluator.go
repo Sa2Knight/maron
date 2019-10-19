@@ -6,6 +6,9 @@ import (
 )
 
 var (
+	// NULL ネイティブオブジェクト
+	NULL = &object.Null{}
+
 	// TRUE ネイティブオブジェクト
 	TRUE = &object.Boolean{Value: true}
 
